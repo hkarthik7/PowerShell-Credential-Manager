@@ -1,1 +1,1 @@
-Get-ChildItem -Path "$($PSScriptRoot)\*.ps1" | % {.$_.FullName}
+Get-ChildItem -Path "$($PSScriptRoot)\*.ps1" | ForEach-Object {.$_.FullName}
