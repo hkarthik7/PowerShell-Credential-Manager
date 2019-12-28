@@ -38,24 +38,35 @@ Function Get-Password {
         --------------------------------------------------------------------------------------------------
         harish.karthic		        v1.0.0.0			23/12/2019		Initial script
         harish.karthic		        v1.0.0.1			23/12/2019		Converted to advanced function
+        harish.karthic		        v1.0.0.2			27/12/2019		Added logging functionality
     #>
 
     [CmdletBinding()]
     Param(
         [Parameter(Mandatory=$false)]
-        [Int]$PasswordLength
+        [Int]$PasswordLength,
+
+        [Parameter(Mandatory=$false)]
+        [String]$LogPath
     )
 
     begin {
         # initialize function variables
         $functionName = $MyInvocation.MyCommand.Name
         $Char = [char[]](33..122)
-        $Name = (whoami).Split("\")[1]
+        $Name = $env:USERNAME
+        $Domain = $env:USERDOMAIN
         $NewChar = @()
         $DefaultPassLength = 4
+        
+        If($LogPath -eq "") {
+            $LogPath = $env:SystemRoot
+        }
+
+        $LogFile = "$LogPath\GetPassword_$(Get-Date -Format ddMMyyyy).log"
 
         $Message = "[$(Get-Date -UFormat %Y/%m/%d_%H:%M:%S)] $functionName : Begin function"
-        Write-Verbose $Message 
+        Write-Verbose $Message | Out-File $LogFile -Append
     }
 
     process {
@@ -64,7 +75,7 @@ Function Get-Password {
 
             # Validating if the given password length is within 90
             $Message = "[$(Get-Date -UFormat %Y/%m/%d_%H:%M:%S)] $functionName : Validating given length $($PasswordLength)"
-            Write-Verbose $Message
+            Write-Verbose $Message | Out-File $LogFile -Append
 
             If($PasswordLength -gt 90) {
                 $Params = @{
@@ -81,7 +92,7 @@ Function Get-Password {
             else {
                 try {
                     $Message = "[$(Get-Date -UFormat %Y/%m/%d_%H:%M:%S)] $functionName : Generating password of length $($PasswordLength)"
-                    Write-Verbose $Message
+                    Write-Verbose $Message | Out-File $LogFile -Append
 
                     # region generating password
 
@@ -92,22 +103,22 @@ Function Get-Password {
                     [String]$Password = Get-Random -InputObject $NewChar -Count $PasswordLength
                     $Password = $Password.Replace(" ","")
                     
-                    $Message = "[$(Get-Date -UFormat %Y/%m/%d_%H:%M:%S)] $functionName : Generated Password : $($Password)"
-                    Write-Verbose $Message
+                    $Message = "[$(Get-Date -UFormat %Y/%m/%d_%H:%M:%S)] $functionName : Generated Password"
+                    Write-Verbose $Message | Out-File $LogFile -Append
 
                     # endregion generating password
 
                     # region display results
 
                     $Passwordresults = [PSCustomObject]@{
-                        Username = $Name
+                        Username = "$Domain\$Name"
                         Password = $Password
                     }
 
                     # endregion display results
                 }
                 Catch {
-                    Write-Host " [$(Get-Date -UFormat %Y/%m/%d_%H:%M:%S)] $functionName : Error at line $($_.InvocationInfo.ScriptLineNumber): $($_.Exception.Message).." -ForegroundColor Red
+                    Write-Host " [$(Get-Date -UFormat %Y/%m/%d_%H:%M:%S)] $functionName : Error at line $($_.InvocationInfo.ScriptLineNumber): $($_.Exception.Message).." -ForegroundColor Red | Out-File $LogFile -Append
                 }
             }
         }
@@ -115,7 +126,7 @@ Function Get-Password {
         else {
 
             $Message = "[$(Get-Date -UFormat %Y/%m/%d_%H:%M:%S)] $functionName : Generating default password"
-            Write-Verbose $Message
+            Write-Verbose $Message | Out-File $LogFile -Append
             try {
 
                 # region generate default password
@@ -138,21 +149,21 @@ Function Get-Password {
                 # region display results
 
                 $Passwordresults = [PSCustomObject]@{
-                    Username = $Name
+                    Username = "$Domain\$Name"
                     Password = $DefaultPassword
                 }
 
                 # endregion display results
             }
             catch {
-                Write-Host " [$(Get-Date -UFormat %Y/%m/%d_%H:%M:%S)] $functionName : Error at line $($_.InvocationInfo.ScriptLineNumber): $($_.Exception.Message).." -ForegroundColor Red
+                Write-Host " [$(Get-Date -UFormat %Y/%m/%d_%H:%M:%S)] $functionName : Error at line $($_.InvocationInfo.ScriptLineNumber): $($_.Exception.Message).." -ForegroundColor Red | Out-File $LogFile -Append
             }
         }
     }
 
     end {
         $Message = "[$(Get-Date -UFormat %Y/%m/%d_%H:%M:%S)] $functionName : End function"
-        Write-Verbose $Message 
+        Write-Verbose $Message | Out-File $LogFile -Append
         
         return $Passwordresults
     }

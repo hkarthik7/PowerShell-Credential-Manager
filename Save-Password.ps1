@@ -28,6 +28,9 @@ Function Save-Password {
         Save-Password -Credentials @{Username="MyUsername";Password="Password"}
 
         .EXAMPLE
+        Save-Password -Credentials (Get-Credential)
+
+        .EXAMPLE
         Save-Password -Credentials @{Username="MyUsername";Password="Password"} -Verbose
 
         .EXAMPLE
@@ -48,7 +51,8 @@ Function Save-Password {
         .NOTES
         Author						Version			    Date			Notes
         --------------------------------------------------------------------------------------------------
-        harish.karthic		        v1.0.0.1			27/12/2019		Initial script
+        harish.karthic		        v1.0.0.0			27/12/2019		Initial script
+        harish.karthic		        v1.0.0.1			27/12/2019		Added logging functionality
     #>
     
     [CmdletBinding()]
@@ -60,13 +64,22 @@ Function Save-Password {
         [String]$FilePath,
 
         [Parameter(Mandatory=$false)]
-        [String]$FileName
+        [String]$FileName,
+
+        [Parameter(Mandatory=$false)]
+        [String]$LogPath
     )
     
     begin {
         # initialize function variables
         $functionName = $MyInvocation.MyCommand.Name
         $Directory = "$env:SystemRoot\SimplePasswordGenerator"
+
+        If($LogPath -eq "") {
+            $LogPath = $env:SystemRoot
+        }
+        
+        $LogFile = "$LogPath\SavePassword_$(Get-Date -Format ddMMyyyy).log"
 
         If(!(Test-Path -Path $Directory)) {
             New-Item -ItemType Directory -Path $Directory | Out-Null
@@ -86,31 +99,31 @@ Function Save-Password {
         # endregion declare file location
 
         $Message = "[$(Get-Date -UFormat %Y/%m/%d_%H:%M:%S)] $functionName : Begin function"
-        Write-Verbose $Message
+        Write-Verbose $Message | Out-File $LogFile -Append
     }
     
     process {        
         try {
             # region save credentials
             $Message = "[$(Get-Date -UFormat %Y/%m/%d_%H:%M:%S)] $functionName : Converting the provided credentials to secure string"
-            Write-Verbose $Message
+            Write-Verbose $Message | Out-File $LogFile -Append
 
             $SecurePassword = [PSCredential]::new($Credentials.Username,($Credentials.Password | ConvertTo-SecureString -AsPlainText -Force))
             
             $Message = "[$(Get-Date -UFormat %Y/%m/%d_%H:%M:%S)] $functionName : Saving the file in $($FilePath)"
-            Write-Verbose $Message
+            Write-Verbose $Message | Out-File $LogFile -Append
 
             $SecurePassword | Export-Clixml -Path $FilePath
             # endregion save credentials
         }
         catch {
-            Write-Host " [$(Get-Date -UFormat %Y/%m/%d_%H:%M:%S)] $functionName : Error at line $($_.InvocationInfo.ScriptLineNumber): $($_.Exception.Message).." -ForegroundColor Red
+            Write-Host " [$(Get-Date -UFormat %Y/%m/%d_%H:%M:%S)] $functionName : Error at line $($_.InvocationInfo.ScriptLineNumber): $($_.Exception.Message).." -ForegroundColor Red | Out-File $LogFile -Append
         }            
     }
     
     end {
         $Message = "[$(Get-Date -UFormat %Y/%m/%d_%H:%M:%S)] $functionName : End function"
-        Write-Verbose $Message
+        Write-Verbose $Message | Out-File $LogFile -Append
     }
 }
 Export-ModuleMember -Function Save-Password
