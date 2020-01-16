@@ -8,14 +8,12 @@
 
 ## HOW TO USE
     1. Download the entire folder
-    2. Create a folder called "CredentialManager" under C:\Users\<UserName>\Documents\WindowsPowerShell\Modules\CredentialManager
-    and copy all the scripts inluding .psd1 and .psm1 script files.
-    3. Now open PowerShell console as admin and run "Import-Module CredentialManager -Force" without double quotes.
+    2. Unzip it to C:\Users\<UserName>\Documents\WindowsPowerShell\Modules
+    3. Now open PowerShell console as admin and run "Import-Module CredentialUtility -Force" without double quotes.
     4. Now run Get-Password to generate the password and Save-Password to save it securely.
 
 ## TIPS
-    1. To show the examles and full details of the scripts run "Get-Help Get-Password -Detailed" respectively for other
-    scripts.
+    1. To show the examples and full details of the scripts run "Get-Help Get-Password -Detailed" respectively for other scripts.
     2. To save the password that is generated run Get-Password | Save-Password
 
 ## TODO :

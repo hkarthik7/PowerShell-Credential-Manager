@@ -39,6 +39,7 @@ Function Get-Password {
         harish.karthic		        v1.0.0.0			23/12/2019		Initial script
         harish.karthic		        v1.0.0.1			23/12/2019		Converted to advanced function
         harish.karthic		        v1.0.0.2			27/12/2019		Added logging functionality
+        harish.karthic		        v1.0.0.3			16/01/2020		Minor bug fix
     #>
 
     [CmdletBinding()]
@@ -60,7 +61,7 @@ Function Get-Password {
         $DefaultPassLength = 4
         
         If($LogPath -eq "") {
-            $LogPath = $env:SystemRoot
+            $LogPath = $env:TEMP
         }
 
         $LogFile = "$LogPath\GetPassword_$(Get-Date -Format ddMMyyyy).log"
@@ -118,7 +119,8 @@ Function Get-Password {
                     # endregion display results
                 }
                 Catch {
-                    Write-Host " [$(Get-Date -UFormat %Y/%m/%d_%H:%M:%S)] $functionName : Error at line $($_.InvocationInfo.ScriptLineNumber): $($_.Exception.Message).." -ForegroundColor Red | Out-File $LogFile -Append
+                    Write-Host " [$(Get-Date -UFormat %Y/%m/%d_%H:%M:%S)] $functionName : Error at line $($_.InvocationInfo.ScriptLineNumber): $($_.Exception.Message).." -ForegroundColor Red
+                    " [$(Get-Date -UFormat %Y/%m/%d_%H:%M:%S)] $functionName : Error at line $($_.InvocationInfo.ScriptLineNumber): $($_.Exception.Message).." | Out-File $LogFile -Append
                 }
             }
         }
@@ -156,7 +158,8 @@ Function Get-Password {
                 # endregion display results
             }
             catch {
-                Write-Host " [$(Get-Date -UFormat %Y/%m/%d_%H:%M:%S)] $functionName : Error at line $($_.InvocationInfo.ScriptLineNumber): $($_.Exception.Message).." -ForegroundColor Red | Out-File $LogFile -Append
+                Write-Host " [$(Get-Date -UFormat %Y/%m/%d_%H:%M:%S)] $functionName : Error at line $($_.InvocationInfo.ScriptLineNumber): $($_.Exception.Message).." -ForegroundColor Red
+                " [$(Get-Date -UFormat %Y/%m/%d_%H:%M:%S)] $functionName : Error at line $($_.InvocationInfo.ScriptLineNumber): $($_.Exception.Message).." | Out-File $LogFile -Append
             }
         }
     }

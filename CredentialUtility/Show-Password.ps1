@@ -8,10 +8,10 @@ Function Show-Password {
 
         .PARAMETER FilePath
         Provide the location of encrypted file.
-        Eg., C:\Windows\MyPasswordFile.xml
+        Eg., C:\Windows\MyPasswordFile.clixml
 
         .EXAMPLE
-        Show-Password -FilePath C:\Windows\MyPasswordFile.xml -Verbose
+        Show-Password -FilePath C:\Windows\MyPasswordFile.clixml -Verbose
 
         .EXAMPLE
         "C:\TEMP\MyPasswordFile.xml" | Show-Password
@@ -20,15 +20,16 @@ Function Show-Password {
         Author						Version			    Date			Notes
         --------------------------------------------------------------------------------------------------
         harish.karthic		        v1.0.0.0			27/12/2019		Initial script
-        harish.karthic		        v1.0.0.1			27/12/2019		Added loggin functionality
+        harish.karthic		        v1.0.0.1			27/12/2019		Added logging functionality
+        harish.karthic		        v1.0.0.2			16/01/2020		Minor bug fix
     #>
     
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [String]$FilePath,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [String]$LogPath
     )
     
@@ -36,8 +37,8 @@ Function Show-Password {
         # initialize function variables
         $functionName = $MyInvocation.MyCommand.Name
         
-        If($LogPath -eq "") {
-            $LogPath = $env:SystemRoot
+        If ($LogPath -eq "") {
+            $LogPath = $env:TEMP
         }
         
         $LogFile = "$LogPath\ShowPassword_$(Get-Date -Format ddMMyyyy).log"
@@ -67,7 +68,8 @@ Function Show-Password {
             # endregion show credentials
         }
         catch {
-            Write-Host " [$(Get-Date -UFormat %Y/%m/%d_%H:%M:%S)] $functionName : Error at line $($_.InvocationInfo.ScriptLineNumber): $($_.Exception.Message).." -ForegroundColor Red | Out-File $LogFile -Append
+            Write-Host " [$(Get-Date -UFormat %Y/%m/%d_%H:%M:%S)] $functionName : Error at line $($_.InvocationInfo.ScriptLineNumber): $($_.Exception.Message).." -ForegroundColor Red
+            " [$(Get-Date -UFormat %Y/%m/%d_%H:%M:%S)] $functionName : Error at line $($_.InvocationInfo.ScriptLineNumber): $($_.Exception.Message).." | Out-File $LogFile -Append
         }            
     }
     

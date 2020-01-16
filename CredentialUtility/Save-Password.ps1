@@ -53,6 +53,7 @@ Function Save-Password {
         --------------------------------------------------------------------------------------------------
         harish.karthic		        v1.0.0.0			27/12/2019		Initial script
         harish.karthic		        v1.0.0.1			27/12/2019		Added logging functionality
+        harish.karthic		        v1.0.0.2			16/01/2020		Minor bug fix
     #>
     
     [CmdletBinding()]
@@ -73,10 +74,10 @@ Function Save-Password {
     begin {
         # initialize function variables
         $functionName = $MyInvocation.MyCommand.Name
-        $Directory = "$env:SystemRoot\SimplePasswordGenerator"
+        $Directory = "$env:TEMP\CredentialManager"
 
         If($LogPath -eq "") {
-            $LogPath = $env:SystemRoot
+            $LogPath = $env:TEMP
         }
         
         $LogFile = "$LogPath\SavePassword_$(Get-Date -Format ddMMyyyy).log"
@@ -91,10 +92,10 @@ Function Save-Password {
         }
 
         If($FilePath -eq "") {            
-            $FilePath = "$Directory\$($FileName)_$(Get-Date -Format ddMMyyyy).xml"
+            $FilePath = "$Directory\$($FileName)_$(Get-Date -Format ddMMyyyy).clixml"
         }
         else {
-            $FilePath = $FilePath.TrimEnd("\") + "\$($FileName)_$(Get-Date -Format ddMMyyyy).xml"
+            $FilePath = $FilePath.TrimEnd("\") + "\$($FileName)_$(Get-Date -Format ddMMyyyy).clixml"
         }        
         # endregion declare file location
 
@@ -117,7 +118,8 @@ Function Save-Password {
             # endregion save credentials
         }
         catch {
-            Write-Host " [$(Get-Date -UFormat %Y/%m/%d_%H:%M:%S)] $functionName : Error at line $($_.InvocationInfo.ScriptLineNumber): $($_.Exception.Message).." -ForegroundColor Red | Out-File $LogFile -Append
+            Write-Host " [$(Get-Date -UFormat %Y/%m/%d_%H:%M:%S)] $functionName : Error at line $($_.InvocationInfo.ScriptLineNumber): $($_.Exception.Message).." -ForegroundColor Red
+            " [$(Get-Date -UFormat %Y/%m/%d_%H:%M:%S)] $functionName : Error at line $($_.InvocationInfo.ScriptLineNumber): $($_.Exception.Message).." | Out-File $LogFile -Append
         }            
     }
     
