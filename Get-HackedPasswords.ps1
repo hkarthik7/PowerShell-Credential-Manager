@@ -17,9 +17,9 @@ function Get-HackedPasswords {
             -Verbose
 
         .NOTES
-        Author				    Version		 Date			Notes
-        -----------------------------------------------------------------------
-        harish.karthic		    v1.0.0.0	27/01/2020		Initial script
+        Author          Version		 Date			Notes
+        ------------------------------------------------------------------------------------------
+        harish.karthic  v1.0.0.0	27/01/2020		Initial script
     #>
 
     [CmdletBinding()]
